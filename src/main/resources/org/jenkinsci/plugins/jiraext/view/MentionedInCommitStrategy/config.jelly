@@ -5,8 +5,8 @@
          xmlns:t="/lib/hudson"
          xmlns:f="/lib/form">
 
-
-    <!-- No content -->
+    <f:entry title="JIRA Issue Prefixes" field="issuePrefix">
+        <f:textbox />
+      </f:entry>
 
 </j:jelly>
-

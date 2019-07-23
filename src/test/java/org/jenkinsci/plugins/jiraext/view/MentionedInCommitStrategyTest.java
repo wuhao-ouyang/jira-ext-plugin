@@ -59,7 +59,7 @@ public class MentionedInCommitStrategyTest
     public void setUp()
     {
         Config.getGlobalConfig().setPattern("FOO-,BAR-");
-        strategy = new MentionedInCommitStrategy();
+        strategy = new MentionedInCommitStrategy("FOO-,BAR-");
     }
 
     @Test
@@ -97,7 +97,9 @@ public class MentionedInCommitStrategyTest
     @Test
     public void testMultipleTicketNames()
     {
-        ChangeLogSet.Entry entry = MockChangeLogUtil.mockChangeLogSetEntry("FOO-101 and\n BAR-101 are both in the message");
+        ChangeLogSet.Entry entry = MockChangeLogUtil.mockChangeLogSetEntry(
+                "Submodule 41e57ae4a..46f5bdc3f: Merge pull request #115 from Org/FOO-101" +
+                "  > Merge pull request #112 from Org/BAR-101");
         assertThat(strategy.getJiraIssuesFromChangeSet(entry).size(), equalTo(2));
         assertThat(strategy.getJiraIssuesFromChangeSet(entry),
                 hasItem(Matchers.<JiraCommit>hasProperty("jiraTicket", equalTo("FOO-101"))));
@@ -126,7 +128,7 @@ public class MentionedInCommitStrategyTest
             throws Exception
     {
         FreeStyleProject project = jenkinsRule.createFreeStyleProject();
-        JiraExtBuildStep builder = new JiraExtBuildStep(new MentionedInCommitStrategy(),
+        JiraExtBuildStep builder = new JiraExtBuildStep(new MentionedInCommitStrategy("FOO-,BAR-"),
                 Arrays.asList((JiraOperationExtension) new AddComment(true, "Hello World")));
         project.getBuildersList().add(builder);
 

@@ -55,9 +55,9 @@ public class IssueStrategyContext
         issueStrategy = new FirstWordOfUpstreamCommitStrategy();
     }
 
-    public void mentionedInCommit()
+    public void mentionedInCommit(String issuePrefix)
     {
-        issueStrategy = new MentionedInCommitStrategy();
+        issueStrategy = new MentionedInCommitStrategy(issuePrefix);
     }
 
     /**

@@ -23,6 +23,7 @@ import hudson.Extension;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 
+import hudson.plugins.git.GitChangeSet;
 import hudson.scm.ChangeLogSet;
 
 import org.apache.commons.lang.StringUtils;
@@ -33,6 +34,7 @@ import org.jenkinsci.plugins.jiraext.domain.JiraCommit;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,13 +59,16 @@ public class MentionedInCommitStrategy
 
     private static final Logger _logger = Logger.getLogger(MentionedInCommitStrategy.class.getName());
 
+    public String issuePrefix;
+
     /**
      * Creates a new {@link MentionedInCommitStrategy} object.
      */
     @DataBoundConstructor
-    public MentionedInCommitStrategy()
+    public MentionedInCommitStrategy(String issuePrefix)
     {
         super();
+        this.issuePrefix = issuePrefix;
     }
 
     @Override
@@ -89,10 +94,21 @@ public class MentionedInCommitStrategy
         final List<JiraCommit> result = new ArrayList<>();
         final List<String> foundTickets = new ArrayList<>();
 
-        for (String validJiraPrefix : Config.getGlobalConfig().getJiraTickets())
-        {
-            String msg = change.getMsg();
+        List<String> validPrefixes = Config.getGlobalConfig().getJiraTickets();
+        if (issuePrefix != null) {
+            try {
+                validPrefixes = Arrays.asList(issuePrefix.split(","));
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+            }
+        }
 
+        String msg = change.getMsg();
+        if (change instanceof GitChangeSet) {
+            msg = ((GitChangeSet) change).getComment();
+        }
+        for (String validJiraPrefix : validPrefixes)
+        {
             while (StringUtils.isNotEmpty(msg))
             {
                 final int foundPos = StringUtils.indexOf(msg, validJiraPrefix);

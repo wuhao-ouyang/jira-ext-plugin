@@ -58,9 +58,10 @@ public abstract class AbstractParsingIssueStrategy
                     ChangeLogSet.Entry change = (ChangeLogSet.Entry) entry;
                     _logger.log(Level.FINE, "Found commit: " + (change == null ? "null" : change.getCommitId()));
                     List<JiraCommit> changes = getJiraIssuesFromChangeSet(change);
-                    if (changes != null)
+                    if (changes != null && !changes.isEmpty())
                     {
                         result.addAll(changes);
+                        listener.getLogger().println("Tickets: " + changes.toString());
                     }
                     else
                     {

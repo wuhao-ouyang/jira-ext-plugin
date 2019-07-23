@@ -100,4 +100,9 @@ public class JiraCommit
         return (StringUtils.equals(jiraTicket, other.jiraTicket)
                 && ObjectUtils.equals(changeSet, other.changeSet));
     }
+
+    @Override
+    public String toString() {
+        return jiraTicket;
+    }
 }
