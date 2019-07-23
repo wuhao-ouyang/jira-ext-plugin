@@ -22,6 +22,7 @@ import hudson.Extension;
 import hudson.model.Job;
 import hudson.model.JobProperty;
 import hudson.model.JobPropertyDescriptor;
+import hudson.util.Secret;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
@@ -61,7 +62,9 @@ public class Config
 
         private String jiraBaseUrl;
         private String username;
-        private String password;
+
+        private Secret password;
+
         private String pattern;
         private boolean verboseLogging;
         private Integer timeout;
@@ -107,12 +110,12 @@ public class Config
             this.username = username;
         }
 
-        public String getPassword()
+        public Secret getPassword()
         {
             return password;
         }
 
-        public void setPassword(String password)
+        public void setPassword(Secret password)
         {
             this.password = password;
         }
@@ -151,7 +154,7 @@ public class Config
         {
             setJiraBaseUrl(formData.getString("jiraBaseUrl"));
             setUsername(formData.getString("username"));
-            setPassword(formData.getString("password"));
+            setPassword(Secret.fromString(formData.getString("password")));
             setPattern(formData.getString("pattern"));
             setVerboseLogging(formData.getBoolean("verboseLogging"));
             setTimeout(formData.getInt("timeout"));
@@ -172,7 +175,7 @@ public class Config
         public boolean isJiraConfigComplete()
         {
             return StringUtils.isNotEmpty(jiraBaseUrl) && StringUtils.isNotEmpty(username)
-                    && StringUtils.isNotEmpty(password);
+                    && StringUtils.isNotEmpty(Secret.toString(password));
         }
     }
 
